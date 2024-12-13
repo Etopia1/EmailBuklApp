@@ -343,7 +343,7 @@ const Dashboard = () => {
   };
   
   return (
-    <div className={`flex flex-col items-center justify-center h-[100%] overflow-y-scroll pt-30 w-[100%] dark:bg-gray-700 bg-gray-100 dark:text-white`}>
+    <div className={`flex flex-col items-center justify-center h-[100%] overflow-y-scroll pt-18  w-[100%] dark:bg-gray-700 bg-gray-100 dark:text-white`}>
       <div className="w-[80%] p-6 rounded-lg shadow-md bg-white dark:bg-gray-800">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Email Bulk Sender</h1>
