@@ -10,7 +10,7 @@ const ImageList = [
     id: 1,
     img: Image2,
     size:"65px",
-    title: "Fast And Reliablele Email Sender to Any Part Of The World",
+    title: "Fast And Reliable Email Sender to Any Part Of The World",
     description:
       "lorem His Life will forever be Changed dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
   },

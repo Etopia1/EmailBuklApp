@@ -163,6 +163,127 @@
 // };
 
 // export default Dashboard;
+// import axios from 'axios';
+// import React, { useEffect, useState } from 'react';
+// import toast, { Toaster } from 'react-hot-toast';
+
+// const Dashboard = () => {
+//   const [emailInput, setEmailInput] = useState('');
+//   const [message, setMessage] = useState('');
+//   const [emailObject, setEmailObject] = useState(null);
+//   const [isDarkMode, setIsDarkMode] = useState(false);
+//   const [loading, setLoading] = useState(false);
+ 
+//   const handleFormatEmails = () => {
+//     if (!emailInput.trim()) {
+//       toast.error('Please enter some email addresses.');
+//       return;
+//     }
+
+//     const emails = emailInput.split(/\s+/); // Split on any whitespace
+//     const validEmails = emails.filter((email) => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email));
+
+//     if (validEmails.length === 0) {
+//       toast.error('No valid email addresses found.');
+//       return;
+//     }
+
+//     const emailObj = validEmails.reduce((acc, email) => {
+//       acc[email] = email; // Store email as key-value pair
+//       return acc;
+//     }, {});
+
+//     setEmailObject(emailObj);
+//   };
+
+
+
+//   const handleSendEmails = async () => {
+//     if (!emailObject || !message) {
+//       toast.error('Please ensure emails are collected and message is entered.');
+    
+//     } else {
+//       const emailList = Object.keys(emailObject);
+//       const url = "https://bulkmailsender.onrender.com/api/v1/send"
+//       const datas = { emails: emailList, message }
+//       setLoading(true)
+//       axios.post(url, datas)
+//         .then((res) => {
+//           console.log(res)
+//           toast.success(res.data.message)
+//           setLoading(false)
+//         })
+//         .catch((error) => {
+//           console.log(error)
+//           setLoading(false)
+//           toast.error(error.data.message)
+//         })
+//     }
+//   };
+
+//   return (
+//     <div className={`flex flex-col items-center justify-center h-[100%] overflow-y-scroll pt-18  w-[100%]    dark:bg-gray-700 bg-gray-100 dark:text-[white]`}>
+//       <div className="w-[80%]  p-6 rounded-lg shadow-md bg-white dark:bg-gray-800">
+//         <div className="flex justify-between items-center mb-6">
+//           <h1 className="text-2xl font-bold">Email Bulk Sender</h1>
+        
+//         </div>
+//   <Toaster/>
+//         <textarea
+//           className="w-full p-4 mb-4 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+//           rows="6"
+//           placeholder="Paste your emails here..."
+//           value={emailInput}
+//           onChange={(e) => setEmailInput(e.target.value)}
+//         ></textarea>
+
+//         <textarea
+//           className="w-full p-4 mb-6 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+//           rows="6"
+//           placeholder="Enter your message..."
+//           value={message}
+//           onChange={(e) => setMessage(e.target.value)}
+//         ></textarea>
+
+//         <div className="flex flex-col sm:flex-row gap-4 mb-6">
+//           <button
+//             className="w-full sm:w-auto px-6 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 focus:outline-none"
+//             onClick={handleFormatEmails}
+//           >
+//             Collect Emails
+//           </button>
+//           <button
+//             className="w-full sm:w-auto px-6 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 focus:outline-none"
+//             onClick={handleSendEmails}
+//             //  { loading ? disable : null}
+//           >
+//             { loading ? "Loading... " : "Send Emails"}
+//           </button>
+//         </div>
+
+//         {/* Collected Emails Container */}
+//         {emailObject && (
+//   <div className="mt-4 max-h-[30%] overflow-y-scroll bg-gray-100 dark:bg-gray-700 p-4 border border-gray-300 rounded-lg dark:text-white">
+//     <h2 className="text-lg font-semibold mb-2">Collected Emails:</h2>
+//     <ul className="list-disc pl-5 space-y-2">
+//       {Object.keys(emailObject).map((email, index) => (
+//         <li key={index} className="text-sm text-gray-800 dark:text-gray-200">
+//           {email}
+//         </li>
+//       ))}
+//     </ul>
+//   </div>
+// )}
+
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Dashboard;
+
+
+
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
@@ -170,65 +291,71 @@ import toast, { Toaster } from 'react-hot-toast';
 const Dashboard = () => {
   const [emailInput, setEmailInput] = useState('');
   const [message, setMessage] = useState('');
-  const [emailObject, setEmailObject] = useState(null);
+  const [emailObject, setEmailObject] = useState({});
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [loading, setLoading] = useState(false);
- 
-  const handleFormatEmails = () => {
-    if (!emailInput.trim()) {
-      toast.error('Please enter some email addresses.');
-      return;
-    }
 
-    const emails = emailInput.split(/\s+/); // Split on any whitespace
-    const validEmails = emails.filter((email) => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email));
+  // Regex for validating email
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+  // Automatically detect and collect valid emails
+  // useEffect(() => {
+    const words = emailInput.split(/\s+/);
+    const newEmails = words.filter((word) => emailRegex.test(word));
+
+    if (newEmails.length > 0) {
+      const updatedEmails = { ...emailObject };
+      newEmails.forEach((email) => {
+        updatedEmails[email] = email;
+      });
+      setEmailObject(updatedEmails);
+    }
+  // }, [emailInput]);
+
+  // Manually collect emails from sentences
+  const handleFormatEmails = () => {
+    const words = emailInput.split(/\s+/);
+    const validEmails = words.filter((word) => emailRegex.test(word));
 
     if (validEmails.length === 0) {
       toast.error('No valid email addresses found.');
       return;
     }
 
-    const emailObj = validEmails.reduce((acc, email) => {
-      acc[email] = email; // Store email as key-value pair
-      return acc;
-    }, {});
-
-    setEmailObject(emailObj);
+    const updatedEmails = { ...emailObject };
+    validEmails.forEach((email) => {
+      updatedEmails[email] = email;
+    });
+    setEmailObject(updatedEmails);
   };
-
-
 
   const handleSendEmails = async () => {
     if (!emailObject || !message) {
-      toast.error('Please ensure emails are collected and message is entered.');
-    
+      toast.error('Please ensure emails are collected and a message is entered.');
     } else {
       const emailList = Object.keys(emailObject);
-      const url = "https://bulkmailsender.onrender.com/api/v1/send"
-      const datas = { emails: emailList, message }
-      setLoading(true)
-      axios.post(url, datas)
-        .then((res) => {
-          console.log(res)
-          toast.success(res.data.message)
-          setLoading(false)
-        })
-        .catch((error) => {
-          console.log(error)
-          setLoading(false)
-          toast.error(error.data.message)
-        })
+      const url = "https://bulkmailsender.onrender.com/api/v1/send";
+      const datas = { emails: emailList, message };
+      setLoading(true);
+      try {
+        const res = await axios.post(url, datas);
+        toast.success(res.data.message);
+      } catch (error) {
+        console.error(error);
+        toast.error('Failed to send emails.');
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
   return (
-    <div className={`flex flex-col items-center justify-center h-[100%] overflow-y-scroll  w-[100%]    dark:bg-gray-700 bg-gray-100 dark:text-[white]`}>
-      <div className="w-[80%]  p-6 rounded-lg shadow-md bg-white dark:bg-gray-800">
+    <div className={`flex flex-col items-center justify-center h-[100%] overflow-y-scroll pt-18 w-[100%] dark:bg-gray-700 bg-gray-100 dark:text-white`}>
+      <div className="w-[80%] p-6 rounded-lg shadow-md bg-white dark:bg-gray-800">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Email Bulk Sender</h1>
-        
         </div>
-  <Toaster/>
+        <Toaster />
         <textarea
           className="w-full p-4 mb-4 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
           rows="6"
@@ -255,21 +382,22 @@ const Dashboard = () => {
           <button
             className="w-full sm:w-auto px-6 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 focus:outline-none"
             onClick={handleSendEmails}
-            //  { loading ? disable : null}
           >
-            { loading ? "Loading... " : "Send Emails"}
+            {loading ? "Loading..." : "Send Emails"}
           </button>
         </div>
 
         {/* Collected Emails Container */}
-        {emailObject && (
+        {Object.keys(emailObject).length > 0 && (
           <div className="mt-4 max-h-[30%] overflow-y-scroll bg-gray-100 dark:bg-gray-700 p-4 border border-gray-300 rounded-lg dark:text-white">
             <h2 className="text-lg font-semibold mb-2">Collected Emails:</h2>
-            <div className="max-h-48 ">
-              <pre className="whitespace-pre-wrap break-words">
-                {JSON.stringify(emailObject, null, 2)}
-              </pre>
-            </div>
+            <ul className="list-disc pl-5 space-y-2">
+              {Object.keys(emailObject).map((email, index) => (
+                <li key={index} className="text-sm text-gray-800 dark:text-gray-200">
+                  {email}
+                </li>
+              ))}
+            </ul>
           </div>
         )}
       </div>
