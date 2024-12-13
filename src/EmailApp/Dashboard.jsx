@@ -295,62 +295,55 @@ const Dashboard = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Regex for validating email
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
-  // Automatically detect and collect valid emails
-  // useEffect(() => {
-    const words = emailInput.split(/\s+/);
-    const newEmails = words.filter((word) => emailRegex.test(word));
-
-    if (newEmails.length > 0) {
-      const updatedEmails = { ...emailObject };
-      newEmails.forEach((email) => {
-        updatedEmails[email] = email;
-      });
-      setEmailObject(updatedEmails);
+   const handleFormatEmails = () => {
+    if (!emailInput.trim()) {
+      toast.error('Please enter some email addresses.');
+      return;
     }
-  // }, [emailInput]);
 
-  // Manually collect emails from sentences
-  const handleFormatEmails = () => {
-    const words = emailInput.split(/\s+/);
-    const validEmails = words.filter((word) => emailRegex.test(word));
+    const emails = emailInput.split(/\s+/); // Split on any whitespace
+    const validEmails = emails.filter((email) => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email));
 
     if (validEmails.length === 0) {
       toast.error('No valid email addresses found.');
       return;
     }
 
-    const updatedEmails = { ...emailObject };
-    validEmails.forEach((email) => {
-      updatedEmails[email] = email;
-    });
-    setEmailObject(updatedEmails);
+    const emailObj = validEmails.reduce((acc, email) => {
+      acc[email] = email; // Store email as key-value pair
+      return acc;
+    }, {});
+
+    setEmailObject(emailObj);
   };
+
+
 
   const handleSendEmails = async () => {
     if (!emailObject || !message) {
-      toast.error('Please ensure emails are collected and a message is entered.');
+      toast.error('Please ensure emails are collected and message is entered.');
+    
     } else {
       const emailList = Object.keys(emailObject);
-      const url = "https://bulkmailsender.onrender.com/api/v1/send";
-      const datas = { emails: emailList, message };
-      setLoading(true);
-      try {
-        const res = await axios.post(url, datas);
-        toast.success(res.data.message);
-      } catch (error) {
-        console.error(error);
-        toast.error('Failed to send emails.');
-      } finally {
-        setLoading(false);
-      }
+      const url = "https://bulkmailsender.onrender.com/api/v1/send"
+      const datas = { emails: emailList, message }
+      setLoading(true)
+      axios.post(url, datas)
+        .then((res) => {
+          console.log(res)
+          toast.success(res.data.message)
+          setLoading(false)
+        })
+        .catch((error) => {
+          console.log(error)
+          setLoading(false)
+          toast.error(error.data.message)
+        })
     }
   };
-
+  
   return (
-    <div className={`flex flex-col items-center justify-center h-[100%] overflow-y-scroll pt-18 w-[100%] dark:bg-gray-700 bg-gray-100 dark:text-white`}>
+    <div className={`flex flex-col items-center justify-center h-[100%] overflow-y-scroll pt-30 w-[100%] dark:bg-gray-700 bg-gray-100 dark:text-white`}>
       <div className="w-[80%] p-6 rounded-lg shadow-md bg-white dark:bg-gray-800">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Email Bulk Sender</h1>
