@@ -7,8 +7,8 @@ const PrivaRoue = () => {
     const [token, setToken ]= useState(true)
   return (
     <>
-      <div className='w-[100%] h-[100vh] flex items-center justify-center  '>
-        <div className="w-[10%] h-[100%]  ">
+      <div className='w-[100%] h-[100vh]  flex items-center justify-center  '>
+        <div className="w-[10%] h-[100%]   ">
             <Sidebar/>
         </div>
         <div className=" w-[90%] h-[100%]  flex items-center justify-center flex-col">

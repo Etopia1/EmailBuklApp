@@ -4,7 +4,7 @@ import { IoMdSearch } from "react-icons/io";
 import { FaCartShopping } from "react-icons/fa6";
 import { FaCaretDown } from "react-icons/fa";
 import { IoCloseOutline } from "react-icons/io5";
-
+import { useNavigate } from "react-router-dom";
 import DarkMode from "./DarkMode";
 import { FiShoppingBag } from "react-icons/fi";
 import { MdMarkEmailUnread } from "react-icons/md";
@@ -71,6 +71,7 @@ const Navbar = ({popup , setPopup}) => {
    const [email2, setEmail2]=useState("")
    const [password2, setPassword2]=useState("")
    const dispatch = useDispatch()
+   const Nav = useNavigate()
 
   return (
     <div className="shadow-md bg-white dark:bg-slate-800 dark:text-white duration-200 relative z-[1] backdrop-blur-sm">
@@ -117,13 +118,13 @@ const Navbar = ({popup , setPopup}) => {
            
             {
               token ? <button
-              onClick={() => setPopup(true)}
+              onClick={() => Nav("/dashboard")}
               className="bg-gradient-to-r from-primary to-secondary transition-all duration-200 text-white  py-1 px-4 rounded-full flex items-center gap-3 group"
             >
               <span className="group-hover:block hidden transition-all duration-200">
-                Login
+                Start Sending Now
               </span>
-              <IoPersonCircleSharp className="text-xl text-white drop-shadow-sm cursor-pointer"  onClick={()=> setPopup(true)}/>
+              < MdMarkEmailUnread className="text-xl text-white drop-shadow-sm cursor-pointer"  onClick={()=> setPopup(true)}/>
             </button> : <button
                
               className="bg-gradient-to-r from-primary to-secondary transition-all duration-200 text-white  py-1 px-4 rounded-full flex items-center gap-3 group"

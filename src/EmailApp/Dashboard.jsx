@@ -164,7 +164,7 @@
 
 // export default Dashboard;
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 
 const Dashboard = () => {
@@ -172,7 +172,8 @@ const Dashboard = () => {
   const [message, setMessage] = useState('');
   const [emailObject, setEmailObject] = useState(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
-
+  const [loading, setLoading] = useState(false);
+ 
   const handleFormatEmails = () => {
     if (!emailInput.trim()) {
       toast.error('Please enter some email addresses.');
@@ -199,26 +200,29 @@ const Dashboard = () => {
 
   const handleSendEmails = async () => {
     if (!emailObject || !message) {
-      alert('Please ensure emails are collected and message is entered.');
-      return;
+      toast.error('Please ensure emails are collected and message is entered.');
+    
     } else {
       const emailList = Object.keys(emailObject);
       const url = "https://bulkmailsender.onrender.com/api/v1/send"
       const datas = { emails: emailList, message }
+      setLoading(true)
       axios.post(url, datas)
         .then((res) => {
           console.log(res)
           toast.success(res.data.message)
+          setLoading(false)
         })
         .catch((error) => {
           console.log(error)
+          setLoading(false)
           toast.error(error.data.message)
         })
     }
   };
 
   return (
-    <div className={`flex flex-col items-center justify-center h-[100%] overflow-y-scroll pt-[10%] w-[100%]    dark:bg-gray-700 bg-gray-100 dark:text-[white]`}>
+    <div className={`flex flex-col items-center justify-center h-[100%] overflow-y-scroll  w-[100%]    dark:bg-gray-700 bg-gray-100 dark:text-[white]`}>
       <div className="w-[80%]  p-6 rounded-lg shadow-md bg-white dark:bg-gray-800">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Email Bulk Sender</h1>
@@ -251,8 +255,9 @@ const Dashboard = () => {
           <button
             className="w-full sm:w-auto px-6 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 focus:outline-none"
             onClick={handleSendEmails}
+            //  { loading ? disable : null}
           >
-            Send Emails
+            { loading ? "Loading... " : "Send Emails"}
           </button>
         </div>
 

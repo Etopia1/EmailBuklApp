@@ -5,9 +5,8 @@ const Sidebar = () => {
   const location = useLocation(); // Get the current route to highlight the active link
 
   const navItems = [
-    { name: 'Emails', path: '/' },
-    { name: 'Templates', path: '/templates' },
-    { name: 'Settings', path: '/settings' },
+    { name: 'Home', path: '/' },
+   
   ];
 
   return (
